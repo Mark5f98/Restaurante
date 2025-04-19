@@ -1,0 +1,53 @@
+arquivo_estoque = "estoque.txt"
+lista = []
+
+# Carregar dados do arquivo
+try:
+    with open(arquivo_estoque, "r", encoding="utf-8") as arquivo:
+        for linha in arquivo:
+            codigo, nome, qtd, unidade, preco, validade = linha.strip().split(";")
+            lista.append([codigo, nome, qtd, unidade, preco, validade])
+except FileNotFoundError:
+    pass  # Arquivo ainda não existe
+
+# Menu principal
+while True:
+    print("\n=== MENU ESTOQUE ===")
+    print("1. Cadastrar produto")
+    print("2. Ver todos os produtos")
+    print("3. Sair")
+    opcao = input("Escolha uma opção: ")
+
+    if opcao == "1":
+        codigo = input("Código do produto: ")
+        nome = input("Nome: ")
+        qtd = input("Quantidade: ")
+        unidade = input("Unidade (ex: kg, un): ")
+        preco = input("Preço unitário: ")
+        validade = input("Data de validade (AAAA-MM-DD): ")
+
+        novo_produto = [codigo, nome, qtd, unidade, preco, validade]
+        lista.append(novo_produto)
+
+        # Salvar todos os dados novamente no arquivo
+        with open(arquivo_estoque, "w", encoding="utf-8") as arquivo:
+            for item in lista:
+                linha = ";".join(item) + "\n"
+                arquivo.write(linha)
+
+        print("Produto cadastrado com sucesso!")
+
+    elif opcao == "2":
+        if not lista:
+            print("Estoque vazio.")
+        else:
+            print("\n--- ESTOQUE ---")
+            for item in lista:
+                print(f"Código: {item[0]}, Nome: {item[1]}, Quantidade: {item[2]} {item[3]}, Preço: R${item[4]}, Validade: {item[5]}")
+
+    elif opcao == "3":
+        print("Saindo...")
+        break
+
+    else:
+        print("Opção inválida. Tente de novo.")
