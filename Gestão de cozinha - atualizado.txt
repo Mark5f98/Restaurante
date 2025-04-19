@@ -1,0 +1,110 @@
+
+cardapio = {}
+
+# Lista de pedidos
+pedidos = []
+
+# Cadastrar prato no cardápio
+def novo_prato():
+    nome = input("Nome do prato: ")
+    preco = float(input("Preço: R$ "))
+    ingredientes = {}
+    print("Ingredientes (digite 'fim' para encerrar):")
+    while True:
+        ing = input("Ingrediente: ")
+        if ing.lower() == 'fim':
+            break
+        qtd = int(input(f"Quantidade de {ing}: "))
+        ingredientes[ing] = qtd
+    cardapio[nome] = {"preco": preco, "ingredientes": ingredientes}
+    print(f"Prato '{nome}' adicionado ao cardápio.")
+
+# Mostrar o cardápio
+def ver_cardapio():
+    if not cardapio:
+        print("Cardápio vazio.")
+        return
+    for nome, dados in cardapio.items():
+        print(f"\nPrato: {nome} - R${dados['preco']:.2f}")
+        print("Ingredientes:")
+        for ing, qtd in dados["ingredientes"].items():
+            print(f"  {ing}: {qtd}")
+
+# Fazer pedido
+def pedir_prato():
+    nome = input("Qual prato foi pedido? ")
+    if nome not in cardapio:
+        print("Esse prato não está no cardápio.")
+        return
+    if tem_ingredientes(nome):
+        usa_ingredientes(nome)
+        pedidos.append({"prato": nome, "status": "recebido"})
+        print("Pedido registrado com sucesso.")
+    else:
+        print("Ingredientes insuficientes para esse prato.")
+
+# Verifica se dá para fazer o prato
+def tem_ingredientes(prato):
+    for ing, qtd in cardapio[prato]["ingredientes"].items():
+        if estoque.get(ing, 0) < qtd:
+            print(f"Falta {ing} no estoque.")
+            return False
+    return True
+
+# Baixa os ingredientes do estoque
+def usa_ingredientes(prato):
+    for ing, qtd in cardapio[prato]["ingredientes"].items():
+        estoque[ing] -= qtd
+
+# Ver pedidos na fila
+def ver_pedidos():
+    if not pedidos:
+        print("Nenhum pedido registrado.")
+        return
+    for i, p in enumerate(pedidos):
+        print(f"{i+1}. {p['prato']} - Status: {p['status']}")
+
+# Atualizar status de pedido
+def atualizar_status():
+    ver_pedidos()
+    i = int(input("Número do pedido para atualizar: ")) - 1
+    if 0 <= i < len(pedidos):
+        novo = input("Novo status (recebido, preparo, pronto): ")
+        pedidos[i]["status"] = novo
+        print("Status atualizado.")
+    else:
+        print("Pedido inválido.")
+
+# Ver estoque atual
+def ver_estoque():
+    print("\nEstoque atual:")
+    for ing, qtd in estoque.items():
+        print(f"{ing}: {qtd}")
+
+# Menu principal
+def menu():
+    while True:
+        print("\n=== MENU COZINHA ===")
+        print("1. Cadastrar novo prato")
+        print("2. Ver cardápio")
+        print("3. Fazer pedido")
+        print("4. Ver pedidos")
+        print("5. Atualizar status de pedido")
+        print("6. Ver estoque")
+        print("7. Sair")
+        op = input("Escolha: ")
+
+        if op == "1": novo_prato()
+        elif op == "2": ver_cardapio()
+        elif op == "3": pedir_prato()
+        elif op == "4": ver_pedidos()
+        elif op == "5": atualizar_status()
+        elif op == "6": ver_estoque()
+        elif op == "7":
+            print("Saindo do sistema...")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+# Inicia o sistema
+menu()
